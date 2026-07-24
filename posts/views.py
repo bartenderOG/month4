@@ -7,3 +7,5 @@ def hello_world(request: HttpRequest):
     return HttpResponse('<h1>Hello world!</h1>')
 
 
+def my_name(request: HttpRequest):
+    return HttpResponse('<h1>Bekzhan</h1>')
