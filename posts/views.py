@@ -15,4 +15,9 @@ def my_name(request: HttpRequest):
 def post_list(request: HttpRequest):
     posts = Post.objects.all()
 
-    return render(request, "posts.html", {"posts": posts})
+    return render(request, "posts/posts.html", {"posts": posts})
+
+def post_detail(request: HttpRequest, id: int) -> HttpResponse:
+    post = Post.objects.get(id=id)
+
+    return render(request, "posts/post_detail.html", {"post": post})

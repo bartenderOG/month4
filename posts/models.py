@@ -11,6 +11,11 @@ class Post(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_ad = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    image = models.ImageField(null=True, upload_to="posts/")
+
+
+
 
 
 
