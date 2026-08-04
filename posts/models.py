@@ -2,6 +2,12 @@ from django.db import models
 
 # Create your models here.
 
+class Category(models.Model):
+    name = models.CharField()
+
+class Tag(models.Model):
+    name = models.CharField()
+
 
 
 
@@ -10,9 +16,13 @@ class Post(models.Model):
     title = models.CharField(max_length=500)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_ad = models.DateTimeField(auto_now=True)
+    updated_ad = models.DateTimeField(auto_now=True, unique=True)
     is_active = models.BooleanField(default=True)
     image = models.ImageField(null=True, upload_to="posts/")
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+    tags = models.ManyToManyField(Tag) # type: ignore
+
+
 
 
 

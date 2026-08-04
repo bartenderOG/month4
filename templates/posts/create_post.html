@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Создать пост | Блог</title>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+
+            <!-- Навигация -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'post_list' %}" class="text-decoration-none">← Все посты</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Новый пост</li>
+                </ol>
+            </nav>
+
+            <!-- Карточка формы -->
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white border-0 rounded-top-4 py-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 56px; height: 56px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" 
+                                 viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">Создать пост</h4>
+                            <small class="opacity-75">Заполните поля ниже</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" action="{% url 'post_create' %}" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Title -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label fw-semibold text-dark">
+                                Заголовок <span class="text-danger">*</span>
+                            </label>
+                            <input type="text"
+                                   name="title"
+                                   id="title"
+                                   class="form-control form-control-lg rounded-3"
+                                   placeholder="Введите заголовок поста..."
+                                   maxlength="200"
+                                   required>
+                            <div class="form-text text-muted">Максимум 200 символов</div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-semibold text-dark">
+                                Описание <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="description"
+                                      id="description"
+                                      class="form-control rounded-3"
+                                      rows="6"
+                                      placeholder="Расскажите о чём ваш пост..."
+                                      required></textarea>
+                            <div class="d-flex justify-content-between mt-1">
+                                <div class="form-text text-muted">Поддерживаются переносы строк</div>
+                                <small class="text-muted" id="descCounter">0 символов</small>
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">Изображение</label>
+
+                            <div class="file-upload-wrapper position-relative rounded-3 border-2 border-dashed p-4 text-center"
+                                 id="dropZone"
+                                 style="border-style: dashed; border-color: #dee2e6; background: #f8f9fa; cursor: pointer; transition: all 0.2s;">
+
+                                <input type="file"
+                                       name="image"
+                                       id="image"
+                                       class="position-absolute top-0 start-0 w-100 h-100 opacity-0"
+                                       accept="image/*"
+                                       style="cursor: pointer;">
+
+                                <div id="uploadPlaceholder">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#6c757d" 
+                                         class="mb-2" viewBox="0 0 16 16">
+                                        <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                        <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                                    </svg>
+                                    <p class="mb-1 text-muted">Перетащите изображение сюда</p>
+                                    <p class="mb-0 small text-muted">или нажмите для выбора файла</p>
+                                    <p class="mb-0 small text-muted mt-1">PNG, JPG, GIF до 5 МБ</p>
+                                </div>
+
+                                <div id="uploadPreview" class="d-none">
+                                    <img id="previewImg" src="" alt="Preview" class="rounded-3 mb-2" 
+                                         style="max-height: 200px; max-width: 100%; object-fit: cover;">
+                                    <p class="mb-0 small text-success fw-semibold" id="fileName"></p>
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill mt-2" 
+                                            id="removeFile">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" 
+                                             class="me-1" viewBox="0 0 16 16">
+                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                        </svg>
+                                        Удалить
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Кнопки -->
+                        <div class="d-flex gap-3 pt-2">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-semibold flex-grow-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" 
+                                     class="me-2" viewBox="0 0 16 16">
+                                    <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11z"/>
+                                </svg>
+                                Опубликовать
+                            </button>
+                            <a href="{% url 'post_list' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                                Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+                    </div>
+    </div>
+</div>
+
+<style>
+    .file-upload-wrapper:hover { 
+        border-color: #0d6efd !important; 
+        background: #e7f1ff !important; 
+    }
+    .file-upload-wrapper.dragover { 
+        border-color: #0d6efd !important; 
+        background: #e7f1ff !important; 
+        border-style: solid !important; 
+    }
+    .form-control:focus { 
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15); 
+        border-color: #86b7fe; 
+    }
+    .rounded-top-4 { 
+        border-top-left-radius: 1rem !important; 
+        border-top-right-radius: 1rem !important; 
+    }
+</style>
+
+<script>
+    // Счётчик символов
+    const descField = document.getElementById('description');
+    const descCounter = document.getElementById('descCounter');
+    descField.addEventListener('input', () => {
+        descCounter.textContent = descField.value.length + ' символов';
+    });
+
+    // Drag & drop + preview
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('image');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const previewImg = document.getElementById('previewImg');
+    const fileName = document.getElementById('fileName');
+    const removeFile = document.getElementById('removeFile');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+        dropZone.addEventListener(event, (e) => { 
+            e.preventDefault(); 
+            e.stopPropagation(); 
+        });
+    });
+    ['dragenter', 'dragover'].forEach(event => {
+        dropZone.addEventListener(event, () => dropZone.classList.add('dragover'));
+    });
+    ['dragleave', 'drop'].forEach(event => {
+        dropZone.addEventListener(event, () => dropZone.classList.remove('dragover'));
+    });
+    dropZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length) { 
+            fileInput.files = files; 
+            showPreview(files[0]); 
+        }
+    });
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) showPreview(fileInput.files[0]);
+    });
+
+    function showPreview(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => { previewImg.src = e.target.result; };
+        reader.readAsDataURL(file);
+        fileName.textContent = file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' МБ)';
+        uploadPlaceholder.classList.add('d-none');
+        uploadPreview.classList.remove('d-none');
+    }
+
+    removeFile.addEventListener('click', () => {
+        fileInput.value = '';
+        uploadPreview.classList.add('d-none');
+        uploadPlaceholder.classList.remove('d-none');
+    });
+</script>
+{% endblock %}
