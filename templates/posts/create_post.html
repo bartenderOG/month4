@@ -55,6 +55,35 @@
                                    required>
                             <div class="form-text text-muted">Максимум 200 символов</div>
                         </div>
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label for="category" class="form-label fw-semibold text-dark">Категория</label>
+                            <select name="category" id="category" class="form-select rounded-3">
+                                <option value="">-- Выберите категорию --</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% empty %}
+                                <option value="" disabled>Категории ещё не созданы</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text text-muted">Если нужной категории нет, создайте новую ниже</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="new_category" class="form-label fw-semibold text-dark">Новая категория</label>
+                            <input type="text"
+                                   name="new_category"
+                                   id="new_category"
+                                   class="form-control rounded-3"
+                                   placeholder="Введите название новой категории..."
+                                   maxlength="200">
+                            <div class="d-flex justify-content-between mt-1">
+                                <div class="form-text text-muted">Название будет сохранено и привязано к посту</div>
+                                <a href="{% url 'create_category' %}" class="small text-primary text-decoration-none">Создать категорию</a>
+                            </div>
+                        </div>
+
+
 
                         <!-- Description -->
                         <div class="mb-4">
