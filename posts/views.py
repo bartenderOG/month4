@@ -7,7 +7,7 @@ from posts.models import Post, Category
 def hello_world(request: HttpRequest):
     return HttpResponse('<h1>Hello world!</h1>')
 
-
+s = Category.objects.order_by("name").all()
 def my_name(request: HttpRequest):
     return HttpResponse('<h1>Bekzhan</h1>')
 
@@ -23,15 +23,6 @@ def post_detail(request: HttpRequest, id: int) -> HttpResponse:
     return render(request, "posts/post_detail.html", {"post": post})
 
 
-def create_post(request: HttpRequest) -> HttpResponse:
-    
-    if request.method.lower() == "post": #type: ignore
-        title = request.POST.get("title")
-        description = request.POST.get("description")
-        image = request.FILES.get("image")
-        post = Post.objects.create(title=title, description=description, image=image)
-        return redirect("post_list")
-    return render(request, "posts/create_post.html")
 
 def create_post(request: HttpRequest) -> HttpResponse:
     categories = Category.objects.order_by("name").all()
@@ -50,6 +41,6 @@ def create_post(request: HttpRequest) -> HttpResponse:
             category, _ = Category.objects.get_or_create(name=new_category_name)
 
         post = Post.objects.create(title=title, description=description, image=image, category=category)
-        return redirect('post_detail', id=post.id)
+        return redirect('post_detail', id=post.id) #type: ignore
 
     return render(request, "posts/create_post.html", {"categories": categories})

@@ -19,7 +19,7 @@ class CategoryAndPostCreationTests(TestCase):
             {
                 "title": "Новый пост",
                 "description": "Описание поста",
-                "category": str(category.id),
+                "category": str(category.id), #type: ignore
             },
         )
 
@@ -39,7 +39,7 @@ class CategoryAndPostCreationTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         post = Post.objects.get(title="Пост с новой категорией")
-        self.assertEqual(post.category.name, "Блог")
+        self.assertEqual(post.category.name, "Блог") #type: ignore
 
     def test_filter_posts_by_category(self):
         category = Category.objects.create(name="Python")
@@ -47,7 +47,7 @@ class CategoryAndPostCreationTests(TestCase):
         Post.objects.create(title="Python post", description="Описание", category=category)
         Post.objects.create(title="Django post", description="Описание", category=other_category)
 
-        response = self.client.get(reverse("post_list"), {"category": category.id})
+        response = self.client.get(reverse("post_list"), {"category": category.id}) #type: ignore
 
         self.assertContains(response, "Python post")
         self.assertNotContains(response, "Django post")
