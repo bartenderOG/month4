@@ -1,15 +1,15 @@
-from django.shortcuts import render, redirect # type: ignore
-from django.http.response import HttpResponse
 from django.http.request import HttpRequest
-from posts.models import Post, Category
+from django.http.response import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+
+from posts.forms import PostForm
+from posts.models import Post
+
 # Create your views here.
 
-def hello_world(request: HttpRequest):
-    return HttpResponse('<h1>Hello world!</h1>')
 
-s = Category.objects.order_by("name").all()
-def my_name(request: HttpRequest):
-    return HttpResponse('<h1>Bekzhan</h1>')
+def hello_world(request: HttpRequest):
+    return HttpResponse("<h1>Hello world!</h1>")
 
 
 def post_list(request: HttpRequest):
@@ -17,30 +17,20 @@ def post_list(request: HttpRequest):
 
     return render(request, "posts/posts.html", {"posts": posts})
 
-def post_detail(request: HttpRequest, id: int) -> HttpResponse:
-    post = Post.objects.get(id=id)
 
+def post_detail(request: HttpRequest, id: int) -> HttpResponse:
+    post = get_object_or_404(Post, id=id)
     return render(request, "posts/post_detail.html", {"post": post})
 
 
-
 def create_post(request: HttpRequest) -> HttpResponse:
-    categories = Category.objects.order_by("name").all()
+    form = PostForm()
+    if request.method.lower() == "post":  # type: ignore
+        form = PostForm(request.POST, request.FILES)
 
-    if request.method == "POST":
-        title = request.POST.get("title")
-        description = request.POST.get("description")
-        image = request.FILES.get("image")
-        category_id = request.POST.get("category")
-        new_category_name = request.POST.get("new_category", "").strip()
+        if form.is_valid():
+            form.instance.save()
 
-        category = None
-        if category_id:
-            category = Category.objects.filter(id=category_id).first()
-        if not category and new_category_name:
-            category, _ = Category.objects.get_or_create(name=new_category_name)
+            return redirect("post_list")
 
-        post = Post.objects.create(title=title, description=description, image=image, category=category)
-        return redirect('post_detail', id=post.id) #type: ignore
-
-    return render(request, "posts/create_post.html", {"categories": categories})
+    return render(request, "posts/create_post.html", context={"form": form})
