@@ -1,0 +1,20 @@
+{% extends "posts/base.html" %}
+
+{% block title %}Удаление поста{% endblock %}
+
+{% block content %}
+<h1>🗑️ Удаление поста</h1>
+
+<div class="card" style="text-align: center;">
+    <p>Вы уверены, что хотите удалить пост <strong>"{{ post.title }}"</strong>?</p>
+    <p style="color: #7f8c8d; margin-bottom: 20px;">Это действие нельзя отменить.</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions" style="justify-content: center;">
+            <button type="submit" class="btn btn-danger">❌ Удалить</button>
+            <a href="{% url 'post_list' %}" class="btn" style="background: #95a5a6; color: white;">↩️ Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

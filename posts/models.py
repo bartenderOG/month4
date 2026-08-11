@@ -2,23 +2,51 @@ from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=100, unique=True, verbose_name="Название")
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+    def __str__(self):
+        return self.name
 
 
 class Tag(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=50, unique=True, verbose_name="Название")
+
+    class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=500)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField(default=True)
-    image = models.ImageField(null=True, upload_to="posts/")
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
-    tags = models.ManyToManyField(Tag)
+    title = models.CharField(max_length=500, verbose_name="Заголовок")
+    description = models.TextField(verbose_name="Описание")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
+    is_active = models.BooleanField(default=True, verbose_name="Активно")
+    image = models.ImageField(null=True, blank=True, upload_to="posts/", verbose_name="Изображение")
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="posts",
+        verbose_name="Категория",
+    )
+    tags = models.ManyToManyField(Tag, blank=True, verbose_name="Теги")
 
+    class Meta:
+        verbose_name = "Пост"
+        verbose_name_plural = "Посты"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title
 
 # # Create your models here.
 # # C-R-U-D
