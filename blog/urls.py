@@ -21,13 +21,18 @@ from django.contrib import admin
 from django.urls import path
 
 from posts.views import create_post, hello_world, post_detail, post_list
+from users.views import register, login_view, logout_view
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", hello_world),
     path("posts/", post_list, name="post_list"),
+    path("users/register/", register, name="register"),
     path("posts/<int:id>/", post_detail, name="post_detail"),
     path("posts/create/", create_post, name="post_create"),
+    path("users/login/", login_view, name="login"),
+    path("users/logout/", logout_view, name="logout"), #type: ignore
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
